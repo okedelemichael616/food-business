@@ -2,7 +2,7 @@
  * ============================================================================
  * COZY'PLATE – KITCHEN VIBES | ORDER SERVER
  * ============================================================================
- * Serves the storefront and exposes a lightweight order API for order intake and confirmation.
+ * Serves the storefront and exposes a lightweight health check.
  * ============================================================================
  */
 
@@ -27,23 +27,6 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-app.post("/api/orders", (req, res) => {
-  const order = req.body || {};
-
-  if (!order || !order.customerName || !order.customerPhone || !order.items || order.items.length === 0) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid order data. Please review your order and try again."
-    });
-  }
-
-  return res.json({
-    success: true,
-    orderNumber: order.orderNumber || "CP-ORDER",
-    message: "Order received successfully. Please complete payment or confirm with the kitchen via WhatsApp."
-  });
-});
-
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log("====================================================");
@@ -54,4 +37,3 @@ if (require.main === module) {
 }
 
 module.exports = app;
-

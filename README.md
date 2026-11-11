@@ -9,7 +9,7 @@ A premium Nigerian food-ordering website for Cozy’Plate, built to help custome
 - Cart management with quantity controls and totals
 - Delivery and pickup checkout flow
 - WhatsApp ordering handoff for kitchen confirmation
-- Lightweight Express backend for order receipt and health checks
+- Lightweight Express server for hosting the site and health checks
 
 ## Run locally
 

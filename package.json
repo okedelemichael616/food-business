@@ -1,7 +1,7 @@
 {
   "name": "cozyplate-kitchen-vibes",
   "version": "1.0.0",
-  "description": "Premium Nigerian Food Business Website & Ordering System for Cozy’Plate – Kitchen Vibes",
+  "description": "Premium Nigerian Food Business Website & Ordering System for Cozy’Plate",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -15,7 +15,7 @@
     "abuja",
     "jollof-rice"
   ],
-  "author": "Cozy'Plate – Kitchen Vibes",
+  "author": "Cozy'Plate ",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",

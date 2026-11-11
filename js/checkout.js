@@ -7,8 +7,6 @@
  */
 
 const CheckoutSystem = {
-  isSubmitting: false,
-
   init() {
     this.bindEvents();
     this.renderOrderSummary();
@@ -55,7 +53,7 @@ const CheckoutSystem = {
     if (form) {
       form.addEventListener("submit", (e) => {
         e.preventDefault();
-        this.handleCheckoutSubmit(form);
+        this.handleCheckoutSubmit();
       });
     }
 
@@ -150,9 +148,7 @@ const CheckoutSystem = {
     return errors;
   },
 
-  async handleCheckoutSubmit(form) {
-    if (this.isSubmitting) return;
-
+  handleCheckoutSubmit() {
     const fullName = document.getElementById("customerName")?.value.trim() || "";
     const phone = document.getElementById("customerPhone")?.value.trim() || "";
     const deliveryPreference = document.querySelector('input[name="deliveryPref"]:checked')?.value || "delivery";
@@ -220,155 +216,32 @@ const CheckoutSystem = {
       grandTotalRaw: grandTotal
     };
 
-    this.setSubmittingState(true);
+    const itemsSummary = orderPayload.items.map(item =>
+      `- ${item.quantity}x ${item.name} (${currency}${Number(item.price).toLocaleString("en-NG")} each)`
+    ).join("\n");
+    const whatsappMessage = [
+      "*Cozy'Plate Order*",
+      `Order #: ${orderPayload.orderNumber}`,
+      `Date: ${orderPayload.orderDateTime}`,
+      `Name: ${orderPayload.customerName}`,
+      `Phone: ${orderPayload.customerPhone}`,
+      `Order type: ${orderPayload.deliveryPreference}`,
+      `Address: ${orderPayload.deliveryAddress}`,
+      `Preferred time: ${orderPayload.preferredTime}`,
+      `Instructions: ${orderPayload.customerNotes}`,
+      "",
+      "*Items:*",
+      itemsSummary,
+      "",
+      `Subtotal: ${orderPayload.subtotalFormatted}`,
+      `Delivery: ${orderPayload.deliveryFeeFormatted}`,
+      `Packaging: ${orderPayload.packagingFeeFormatted}`,
+      `Total: ${orderPayload.grandTotalFormatted}`,
+      "",
+      "Please confirm my order."
+    ].join("\n");
+    const whatsappUrl = `https://wa.me/${CozyConfig.contact.whatsapp}?text=${encodeURIComponent(whatsappMessage)}`;
 
-    try {
-      const response = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderPayload)
-      });
-
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.message || "Order could not be submitted right now.");
-      }
-
-      this.onOrderSuccess(orderPayload);
-    } catch (error) {
-      console.error("Order submission failed:", error);
-      this.onOrderFailed(error.message || "Something went wrong while submitting your order.", orderPayload);
-    } finally {
-      this.setSubmittingState(false);
-    }
-  },
-
-  setSubmittingState(isSubmitting) {
-    this.isSubmitting = isSubmitting;
-    const submitBtn = document.getElementById("btnPlaceOrder");
-    if (!submitBtn) return;
-
-    if (isSubmitting) {
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `
-        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-        Placing Order...
-      `;
-    } else {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = `
-        <i class="bi bi-shield-check me-2"></i> Place Order Now
-      `;
-    }
-  },
-
-  onOrderSuccess(orderData) {
-    Cart.clearCart();
-
-    const checkoutModalEl = document.getElementById("checkoutModal");
-    if (checkoutModalEl && typeof bootstrap !== "undefined") {
-      const modalInstance = bootstrap.Modal.getInstance(checkoutModalEl);
-      if (modalInstance) modalInstance.hide();
-    }
-
-    const successModalEl = document.getElementById("orderSuccessModal");
-    if (successModalEl && typeof bootstrap !== "undefined") {
-      const modal = new bootstrap.Modal(successModalEl);
-
-      document.getElementById("successOrderNumber").textContent = orderData.orderNumber;
-      document.getElementById("successCustomerName").textContent = orderData.customerName;
-      document.getElementById("successPhone").textContent = orderData.customerPhone;
-      document.getElementById("successAddress").textContent = orderData.deliveryAddress;
-      document.getElementById("successTotal").textContent = orderData.grandTotalFormatted;
-      document.getElementById("successDateTime").textContent = orderData.orderDateTime;
-
-      const successItemsList = document.getElementById("successItemsList");
-      if (successItemsList) {
-        successItemsList.innerHTML = orderData.items.map(item => `
-          <div class="d-flex justify-content-between py-1 small">
-            <span>${item.quantity}x ${item.name}</span>
-            <span class="fw-semibold">${CozyConfig.ordering?.currencySymbol || "₦"}${Number(item.price * item.quantity).toLocaleString("en-NG")}</span>
-          </div>
-        `).join("");
-      }
-
-      const whatsappBtn = document.getElementById("successWhatsAppBtn");
-      if (whatsappBtn) {
-        const text = encodeURIComponent(
-          `*Order Confirmation - Cozy'Plate*\n` +
-          `Order #: *${orderData.orderNumber}*\n` +
-          `Customer: ${orderData.customerName}\n` +
-          `Phone: ${orderData.customerPhone}\n` +
-          `Preference: ${orderData.deliveryPreference}\n` +
-          `Total: ${orderData.grandTotalFormatted}\n\n` +
-          `Hello! I just placed this order and would like to confirm it with the kitchen.`
-        );
-        whatsappBtn.href = `https://wa.me/${CozyConfig.contact.whatsapp}?text=${text}`;
-      }
-
-      modal.show();
-    } else {
-      alert(`Success! Order #${orderData.orderNumber} placed successfully!`);
-    }
-  },
-
-  onOrderFailed(errorMessage, orderData) {
-    const errorAlertEl = document.getElementById("checkoutErrorMessage");
-    const whatsappMsg = encodeURIComponent(
-      `*ORDER FOR COZY'PLATE KITCHEN*\n` +
-      `--------------------------------\n` +
-      `*Order ID:* ${orderData.orderNumber}\n` +
-      `*Date:* ${orderData.orderDateTime}\n` +
-      `*Customer:* ${orderData.customerName}\n` +
-      `*Phone:* ${orderData.customerPhone}\n` +
-      `*Delivery Type:* ${orderData.deliveryPreference}\n` +
-      `*Address:* ${orderData.deliveryAddress}\n` +
-      `*Time:* ${orderData.preferredTime}\n` +
-      `*Notes:* ${orderData.customerNotes}\n\n` +
-      `*ORDERED ITEMS:*\n${orderData.items.map(item => `• ${item.quantity}x ${item.name}`).join("\n")}\n\n` +
-      `*Total:* ${orderData.grandTotalFormatted}\n` +
-      `--------------------------------\n` +
-      `Please confirm my order!`
-    );
-    const whatsappUrl = `https://wa.me/${CozyConfig.contact.whatsapp}?text=${whatsappMsg}`;
-
-    const errorHtml = `
-      <div class="alert alert-warning border-warning shadow-sm rounded-4 p-4 mb-4" role="alert">
-        <div class="d-flex align-items-start gap-3">
-          <div class="rounded-circle bg-warning text-dark p-2 fs-4">
-            <i class="bi bi-exclamation-triangle-fill"></i>
-          </div>
-          <div class="flex-grow-1">
-            <h5 class="alert-heading fw-bold mb-1">Order Notice</h5>
-            <p class="mb-2 text-dark">
-              ${errorMessage}
-            </p>
-            <div class="p-3 bg-white rounded-3 border border-warning-subtle mb-3">
-              <div class="small fw-bold text-uppercase text-muted mb-1">Your order is still safe:</div>
-              <p class="small mb-0 text-secondary">
-                Send the exact order details directly to the Cozy’Plate WhatsApp kitchen line in one tap.
-              </p>
-            </div>
-            <div class="d-flex flex-wrap gap-2">
-              <a href="${whatsappUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-success fw-bold px-4 rounded-pill shadow-sm">
-                <i class="bi bi-whatsapp me-2"></i> Send Order via WhatsApp
-              </a>
-              <button type="button" class="btn btn-outline-dark px-3 rounded-pill" onclick="CheckoutSystem.handleCheckoutSubmit(document.getElementById('cozyCheckoutForm'))">
-                <i class="bi bi-arrow-repeat me-1"></i> Retry Order
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-
-    if (errorAlertEl) {
-      errorAlertEl.innerHTML = errorHtml;
-      errorAlertEl.scrollIntoView({ behavior: "smooth", block: "center" });
-    } else {
-      alert(`Notice: ${errorMessage}\n\nPlease click OK to complete via WhatsApp: ${whatsappUrl}`);
-      window.open(whatsappUrl, "_blank");
-    }
+    window.location.href = whatsappUrl;
   }
 };
