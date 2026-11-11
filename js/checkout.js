@@ -1,10 +1,8 @@
-/**
+﻿/**
  * ============================================================================
- * COZY'PLATE – KITCHEN VIBES | CHECKOUT & EMAIL ORDER NOTIFICATION SYSTEM
+ * COZY'PLATE – KITCHEN VIBES | CHECKOUT SYSTEM
  * ============================================================================
- * Handles customer checkout data collection, order number generation,
- * field validations, itemized calculations, and secure dispatch to the business
- * owner's Gmail inbox via EmailJS / Backend API, with zero secret exposure.
+ * Handles customer checkout, validation, pricing, and order confirmation.
  * ============================================================================
  */
 
@@ -14,19 +12,6 @@ const CheckoutSystem = {
   init() {
     this.bindEvents();
     this.renderOrderSummary();
-    this.initEmailJS();
-  },
-
-  initEmailJS() {
-    // If EmailJS is loaded in window, initialize with public key if available
-    try {
-      if (typeof emailjs !== "undefined" && CozyConfig.email?.emailjs?.publicKey && CozyConfig.email.emailjs.publicKey !== "YOUR_EMAILJS_PUBLIC_KEY") {
-        emailjs.init(CozyConfig.email.emailjs.publicKey);
-        console.log("EmailJS initialized with configured Public Key");
-      }
-    } catch (err) {
-      console.warn("EmailJS init note:", err);
-    }
   },
 
   generateOrderNumber() {
@@ -45,7 +30,6 @@ const CheckoutSystem = {
   },
 
   bindEvents() {
-    // Toggle delivery vs pickup fields
     const deliveryRadio = document.getElementById("prefDelivery");
     const pickupRadio = document.getElementById("prefPickup");
     const addressWrapper = document.getElementById("checkoutAddressWrapper");
@@ -67,7 +51,6 @@ const CheckoutSystem = {
       });
     }
 
-    // Checkout form submission
     const form = document.getElementById("cozyCheckoutForm");
     if (form) {
       form.addEventListener("submit", (e) => {
@@ -76,7 +59,6 @@ const CheckoutSystem = {
       });
     }
 
-    // Listen for cart changes to refresh summary
     window.addEventListener("cozyCartUpdated", () => {
       this.renderOrderSummary();
     });
@@ -98,7 +80,7 @@ const CheckoutSystem = {
     }
 
     if (summaryContainer) {
-      if (items.length === 0) {
+      if (!items.length) {
         summaryContainer.innerHTML = `
           <div class="text-center py-4 text-muted">
             <i class="bi bi-basket3 display-6 d-block mb-2 text-warning"></i>
@@ -155,11 +137,6 @@ const CheckoutSystem = {
       errors.push("Please provide a valid Nigerian phone number (e.g. 0816 724 3214 or +234...).");
     }
 
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email || !emailPattern.test(formData.email)) {
-      errors.push("Please provide a valid email address to receive order updates.");
-    }
-
     if (formData.deliveryPreference === "delivery") {
       if (!formData.address || formData.address.trim().length < 8) {
         errors.push("Please provide a complete delivery address including street and landmark.");
@@ -167,7 +144,7 @@ const CheckoutSystem = {
     }
 
     if (Cart.getItems().length === 0) {
-      errors.push("Your cart is empty! Please add some delicious meals from the menu first.");
+      errors.push("Your cart is empty! Please add some dishes from the menu first.");
     }
 
     return errors;
@@ -176,10 +153,8 @@ const CheckoutSystem = {
   async handleCheckoutSubmit(form) {
     if (this.isSubmitting) return;
 
-    // Collect field values
     const fullName = document.getElementById("customerName")?.value.trim() || "";
     const phone = document.getElementById("customerPhone")?.value.trim() || "";
-    const email = document.getElementById("customerEmail")?.value.trim() || "";
     const deliveryPreference = document.querySelector('input[name="deliveryPref"]:checked')?.value || "delivery";
     const address = document.getElementById("customerAddress")?.value.trim() || "";
     const area = document.getElementById("customerArea")?.value || "Abuja Municipal";
@@ -189,17 +164,15 @@ const CheckoutSystem = {
     const payload = {
       fullName,
       phone,
-      email,
       deliveryPreference,
       address: deliveryPreference === "pickup" ? "Self Pickup from Cozy'Plate Kitchen (A.C Umezulike St, Abuja)" : `${address} (${area})`,
       deliveryTime,
       instructions
     };
 
-    // Form validation
     const validationErrors = this.validateForm(payload);
     const errorAlertEl = document.getElementById("checkoutErrorMessage");
-    
+
     if (validationErrors.length > 0) {
       if (errorAlertEl) {
         errorAlertEl.innerHTML = `
@@ -221,7 +194,6 @@ const CheckoutSystem = {
 
     if (errorAlertEl) errorAlertEl.innerHTML = "";
 
-    // Generate Order Details
     const orderNumber = this.generateOrderNumber();
     const orderDateTime = this.formatOrderDateTime();
     const items = Cart.getItems();
@@ -231,144 +203,45 @@ const CheckoutSystem = {
     const packagingFee = Cart.getPackagingFee();
     const grandTotal = Cart.getTotal();
 
-    // Create itemized summary string for plain text & email templates
-    const itemsFormattedText = items.map(item => 
-      `• ${item.quantity}x ${item.name} (${currency}${item.price.toLocaleString("en-NG")} each) = ${currency}${(item.quantity * item.price).toLocaleString("en-NG")}`
-    ).join("\n");
-
-    const completeOrderData = {
+    const orderPayload = {
       orderNumber,
       orderDateTime,
       customerName: fullName,
       customerPhone: phone,
-      customerEmail: email,
       deliveryPreference: deliveryPreference.toUpperCase(),
       deliveryAddress: payload.address,
       preferredTime: deliveryTime,
       customerNotes: instructions,
-      items: items,
-      itemsSummary: itemsFormattedText,
+      items,
       subtotalFormatted: `${currency}${subtotal.toLocaleString("en-NG")}`,
       deliveryFeeFormatted: deliveryFee === 0 ? "FREE" : `${currency}${deliveryFee.toLocaleString("en-NG")}`,
       packagingFeeFormatted: `${currency}${packagingFee.toLocaleString("en-NG")}`,
       grandTotalFormatted: `${currency}${grandTotal.toLocaleString("en-NG")}`,
-      grandTotalRaw: grandTotal,
-      ownerGmail: CozyConfig.email?.ownerGmail || "cozyplatekitchen@gmail.com"
+      grandTotalRaw: grandTotal
     };
 
-    // UI Loading state
     this.setSubmittingState(true);
 
     try {
-      // Send Order via Email
-      const emailResult = await this.sendOrderNotification(completeOrderData);
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderPayload)
+      });
 
-      if (emailResult.success) {
-        // Successful Order Processing
-        this.onOrderSuccess(completeOrderData);
-      } else {
-        // Failed to send email: We do NOT pretend it succeeded!
-        this.onOrderFailed(emailResult.error, completeOrderData);
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Order could not be submitted right now.");
       }
-    } catch (err) {
-      console.error("Order dispatch error:", err);
-      this.onOrderFailed(err.message || "Network communication failed", completeOrderData);
+
+      this.onOrderSuccess(orderPayload);
+    } catch (error) {
+      console.error("Order submission failed:", error);
+      this.onOrderFailed(error.message || "Something went wrong while submitting your order.", orderPayload);
     } finally {
       this.setSubmittingState(false);
     }
-  },
-
-  async sendOrderNotification(orderData) {
-    const config = CozyConfig.email;
-    const emailjsCfg = config?.emailjs;
-
-    // Check if backend API is enabled
-    if (config?.backend?.enabled && config.backend.endpoint) {
-      try {
-        const response = await fetch(config.backend.endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(orderData)
-        });
-        const json = await response.json();
-        if (response.ok && json.success) {
-          return { success: true, method: "backend" };
-        } else {
-          return { success: false, error: json.message || "Backend email server error" };
-        }
-      } catch (backendErr) {
-        console.warn("Backend order submission failed, falling back to EmailJS:", backendErr);
-      }
-    }
-
-    // EmailJS Delivery Mode
-    if (typeof emailjs !== "undefined" && emailjsCfg) {
-      const isConfigured = emailjsCfg.publicKey && 
-                           emailjsCfg.publicKey !== "YOUR_EMAILJS_PUBLIC_KEY" &&
-                           emailjsCfg.serviceId !== "service_cozyplate";
-
-      if (isConfigured) {
-        try {
-          // Template parameters matching EmailJS template placeholders
-          const templateParams = {
-            order_number: orderData.orderNumber,
-            order_date_time: orderData.orderDateTime,
-            to_email: config.ownerGmail,
-            customer_name: orderData.customerName,
-            customer_phone: orderData.customerPhone,
-            customer_email: orderData.customerEmail,
-            delivery_preference: orderData.deliveryPreference,
-            delivery_address: orderData.deliveryAddress,
-            delivery_time: orderData.preferredTime,
-            customer_notes: orderData.customerNotes,
-            items_list: orderData.itemsSummary,
-            subtotal: orderData.subtotalFormatted,
-            delivery_fee: orderData.deliveryFeeFormatted,
-            packaging_fee: orderData.packagingFeeFormatted,
-            total_amount: orderData.grandTotalFormatted
-          };
-
-          // Send to Business Owner's Gmail
-          await emailjs.send(emailjsCfg.serviceId, emailjsCfg.templateIdOwner, templateParams);
-
-          // Optionally send customer confirmation if template exists
-          if (emailjsCfg.templateIdCustomer && emailjsCfg.templateIdCustomer !== "template_cozy_customer") {
-            try {
-              await emailjs.send(emailjsCfg.serviceId, emailjsCfg.templateIdCustomer, {
-                ...templateParams,
-                to_email: orderData.customerEmail
-              });
-            } catch (custErr) {
-              console.warn("Customer confirmation email non-fatal error:", custErr);
-            }
-          }
-
-          return { success: true, method: "emailjs" };
-        } catch (emailjsError) {
-          console.error("EmailJS dispatch failed:", emailjsError);
-          return { 
-            success: false, 
-            error: emailjsError?.text || emailjsError?.message || "EmailJS server rejected the order dispatch." 
-          };
-        }
-      } else {
-        // Notice: The owner hasn't placed their real EmailJS keys yet.
-        // As per requirements: "Do not pretend an order was successfully submitted if the email service fails."
-        // We provide a dedicated friendly message explaining that EmailJS keys need to be inserted in config.js
-        // AND provide an instant 1-click WhatsApp order backup button!
-        console.warn("EmailJS credentials are still set to defaults.");
-        return {
-          success: false,
-          isKeyMissing: true,
-          error: "Email notification service is pending API Key setup in js/config.js. (Owner's inbox: " + config.ownerGmail + ")"
-        };
-      }
-    }
-
-    return {
-      success: false,
-      error: "EmailJS SDK is not available or email service is disabled."
-    };
   },
 
   setSubmittingState(isSubmitting) {
@@ -380,7 +253,7 @@ const CheckoutSystem = {
       submitBtn.disabled = true;
       submitBtn.innerHTML = `
         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-        Sending Order to Kitchen...
+        Placing Order...
       `;
     } else {
       submitBtn.disabled = false;
@@ -391,30 +264,25 @@ const CheckoutSystem = {
   },
 
   onOrderSuccess(orderData) {
-    // 1. Clear cart
     Cart.clearCart();
 
-    // 2. Hide Checkout Modal if in modal mode
     const checkoutModalEl = document.getElementById("checkoutModal");
     if (checkoutModalEl && typeof bootstrap !== "undefined") {
       const modalInstance = bootstrap.Modal.getInstance(checkoutModalEl);
       if (modalInstance) modalInstance.hide();
     }
 
-    // 3. Show Success Modal / Content
     const successModalEl = document.getElementById("orderSuccessModal");
     if (successModalEl && typeof bootstrap !== "undefined") {
       const modal = new bootstrap.Modal(successModalEl);
 
-      // Populate details
       document.getElementById("successOrderNumber").textContent = orderData.orderNumber;
       document.getElementById("successCustomerName").textContent = orderData.customerName;
       document.getElementById("successPhone").textContent = orderData.customerPhone;
-      document.getElementById("successEmail").textContent = orderData.customerEmail;
       document.getElementById("successAddress").textContent = orderData.deliveryAddress;
       document.getElementById("successTotal").textContent = orderData.grandTotalFormatted;
       document.getElementById("successDateTime").textContent = orderData.orderDateTime;
-      
+
       const successItemsList = document.getElementById("successItemsList");
       if (successItemsList) {
         successItemsList.innerHTML = orderData.items.map(item => `
@@ -425,7 +293,6 @@ const CheckoutSystem = {
         `).join("");
       }
 
-      // Configure WhatsApp tracking link
       const whatsappBtn = document.getElementById("successWhatsAppBtn");
       if (whatsappBtn) {
         const text = encodeURIComponent(
@@ -435,23 +302,19 @@ const CheckoutSystem = {
           `Phone: ${orderData.customerPhone}\n` +
           `Preference: ${orderData.deliveryPreference}\n` +
           `Total: ${orderData.grandTotalFormatted}\n\n` +
-          `Hello! I just placed this order online and would like to track my delivery.`
+          `Hello! I just placed this order and would like to confirm it with the kitchen.`
         );
         whatsappBtn.href = `https://wa.me/${CozyConfig.contact.whatsapp}?text=${text}`;
       }
 
       modal.show();
     } else {
-      // Fallback redirect or alert
       alert(`Success! Order #${orderData.orderNumber} placed successfully!`);
     }
   },
 
   onOrderFailed(errorMessage, orderData) {
     const errorAlertEl = document.getElementById("checkoutErrorMessage");
-    const currency = CozyConfig.ordering?.currencySymbol || "₦";
-
-    // Format a crisp WhatsApp message so the customer can send their exact order in 1 click
     const whatsappMsg = encodeURIComponent(
       `*ORDER FOR COZY'PLATE KITCHEN*\n` +
       `--------------------------------\n` +
@@ -459,16 +322,12 @@ const CheckoutSystem = {
       `*Date:* ${orderData.orderDateTime}\n` +
       `*Customer:* ${orderData.customerName}\n` +
       `*Phone:* ${orderData.customerPhone}\n` +
-      `*Email:* ${orderData.customerEmail}\n` +
       `*Delivery Type:* ${orderData.deliveryPreference}\n` +
       `*Address:* ${orderData.deliveryAddress}\n` +
       `*Time:* ${orderData.preferredTime}\n` +
       `*Notes:* ${orderData.customerNotes}\n\n` +
-      `*ORDERED ITEMS:*\n${orderData.itemsSummary}\n\n` +
-      `*Subtotal:* ${orderData.subtotalFormatted}\n` +
-      `*Delivery:* ${orderData.deliveryFeeFormatted}\n` +
-      `*Packaging:* ${orderData.packagingFeeFormatted}\n` +
-      `*GRAND TOTAL:* ${orderData.grandTotalFormatted}\n` +
+      `*ORDERED ITEMS:*\n${orderData.items.map(item => `• ${item.quantity}x ${item.name}`).join("\n")}\n\n` +
+      `*Total:* ${orderData.grandTotalFormatted}\n` +
       `--------------------------------\n` +
       `Please confirm my order!`
     );
@@ -478,25 +337,25 @@ const CheckoutSystem = {
       <div class="alert alert-warning border-warning shadow-sm rounded-4 p-4 mb-4" role="alert">
         <div class="d-flex align-items-start gap-3">
           <div class="rounded-circle bg-warning text-dark p-2 fs-4">
-            <i class="bi bi-envelope-exclamation-fill"></i>
+            <i class="bi bi-exclamation-triangle-fill"></i>
           </div>
           <div class="flex-grow-1">
-            <h5 class="alert-heading fw-bold mb-1">Email Service Notification</h5>
+            <h5 class="alert-heading fw-bold mb-1">Order Notice</h5>
             <p class="mb-2 text-dark">
               ${errorMessage}
             </p>
             <div class="p-3 bg-white rounded-3 border border-warning-subtle mb-3">
-              <div class="small fw-bold text-uppercase text-muted mb-1">Don't worry! Your order #${orderData.orderNumber} is safe:</div>
+              <div class="small fw-bold text-uppercase text-muted mb-1">Your order is still safe:</div>
               <p class="small mb-0 text-secondary">
-                You can instantly transmit your exact order with one tap directly to the Cozy’Plate Kitchen WhatsApp line!
+                Send the exact order details directly to the Cozy’Plate WhatsApp kitchen line in one tap.
               </p>
             </div>
             <div class="d-flex flex-wrap gap-2">
               <a href="${whatsappUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-success fw-bold px-4 rounded-pill shadow-sm">
-                <i class="bi bi-whatsapp me-2"></i> Send Order via WhatsApp (${orderData.grandTotalFormatted})
+                <i class="bi bi-whatsapp me-2"></i> Send Order via WhatsApp
               </a>
               <button type="button" class="btn btn-outline-dark px-3 rounded-pill" onclick="CheckoutSystem.handleCheckoutSubmit(document.getElementById('cozyCheckoutForm'))">
-                <i class="bi bi-arrow-repeat me-1"></i> Retry Email
+                <i class="bi bi-arrow-repeat me-1"></i> Retry Order
               </button>
             </div>
           </div>

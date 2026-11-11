@@ -1,14 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Checkout – Cozy’Plate Kitchen Vibes. Complete your delicious Nigerian food order with fast delivery across Abuja.">
+  <meta name="description" content="Checkout â€“ Cozyâ€™Plate Kitchen Vibes. Complete your delicious Nigerian food order with fast delivery across Abuja.">
   <meta name="theme-color" content="#E8590C">
-  <title>Checkout | Cozy’Plate – Kitchen Vibes</title>
+  <title>Checkout | Cozyâ€™Plate â€“ Kitchen Vibes</title>
 
   <!-- Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍲</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>ðŸ²</text></svg>">
 
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -25,7 +25,7 @@
           <i class="bi bi-fire"></i>
         </div>
         <div>
-          <span class="navbar-brand-title">Cozy’Plate</span>
+          <span class="navbar-brand-title">Cozyâ€™Plate</span>
           <span class="navbar-brand-subtitle">Kitchen Vibes</span>
         </div>
       </a>
@@ -42,7 +42,7 @@
         <div class="mb-4">
           <span class="badge bg-warning-subtle text-warning-emphasis text-uppercase fw-bold px-3 py-1 rounded-pill mb-2">Secure Checkout</span>
           <h2 class="fw-bold font-heading mb-1">Complete Your Kitchen Order</h2>
-          <p class="text-muted small">Please fill out your delivery details. Your order will be sent directly to our kitchen inbox.</p>
+          <p class="text-muted small">Please fill out your delivery details. Your order will be checked and prepared by the kitchen team.</p>
         </div>
 
         <!-- Dynamic Alert Box for Errors or Email Notifications -->
@@ -62,15 +62,9 @@
                   <input type="text" class="form-control" id="customerName" placeholder="e.g. Fatima Mohammed" required minlength="3">
                 </div>
 
-                <div class="row g-3 mb-3">
-                  <div class="col-12 col-sm-6">
-                    <label for="customerPhone" class="form-label">Phone Number <span class="text-danger">*</span></label>
-                    <input type="tel" class="form-control" id="customerPhone" placeholder="0816 724 3214" required>
-                  </div>
-                  <div class="col-12 col-sm-6">
-                    <label for="customerEmail" class="form-label">Email Address <span class="text-danger">*</span></label>
-                    <input type="email" class="form-control" id="customerEmail" placeholder="your.name@gmail.com" required>
-                  </div>
+                <div class="mb-3">
+                  <label for="customerPhone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                  <input type="tel" class="form-control" id="customerPhone" placeholder="0816 724 3214" required>
                 </div>
 
                 <hr class="my-4">
@@ -116,10 +110,10 @@
                 <div class="mb-3">
                   <label for="customerDeliveryTime" class="form-label">Preferred Delivery Time</label>
                   <select class="form-select" id="customerDeliveryTime">
-                    <option value="As soon as ready (30-45 mins)">As soon as ready (30 – 45 mins)</option>
-                    <option value="Today Evening (6:00 PM – 8:00 PM)">Today Evening (6:00 PM – 8:00 PM)</option>
-                    <option value="Today Night (8:00 PM – 10:00 PM)">Today Night (8:00 PM – 10:00 PM)</option>
-                    <option value="Tomorrow Lunch (12:30 PM – 2:00 PM)">Tomorrow Lunch (12:30 PM – 2:00 PM)</option>
+                    <option value="As soon as ready (30-45 mins)">As soon as ready (30 â€“ 45 mins)</option>
+                    <option value="Today Evening (6:00 PM â€“ 8:00 PM)">Today Evening (6:00 PM â€“ 8:00 PM)</option>
+                    <option value="Today Night (8:00 PM â€“ 10:00 PM)">Today Night (8:00 PM â€“ 10:00 PM)</option>
+                    <option value="Tomorrow Lunch (12:30 PM â€“ 2:00 PM)">Tomorrow Lunch (12:30 PM â€“ 2:00 PM)</option>
                   </select>
                 </div>
 
@@ -147,19 +141,19 @@
                 <div class="border-top pt-2">
                   <div class="d-flex justify-content-between text-muted small mb-1">
                     <span>Subtotal</span>
-                    <span id="checkoutSubtotal" class="fw-bold text-dark">₦0</span>
+                    <span id="checkoutSubtotal" class="fw-bold text-dark">â‚¦0</span>
                   </div>
                   <div class="d-flex justify-content-between text-muted small mb-1">
                     <span>Delivery Fee</span>
-                    <span id="checkoutDeliveryFee" class="fw-bold text-dark">₦1,500</span>
+                    <span id="checkoutDeliveryFee" class="fw-bold text-dark">â‚¦1,500</span>
                   </div>
                   <div class="d-flex justify-content-between text-muted small mb-2">
                     <span>Packaging Pack</span>
-                    <span id="checkoutPackagingFee" class="fw-bold text-dark">₦500</span>
+                    <span id="checkoutPackagingFee" class="fw-bold text-dark">â‚¦500</span>
                   </div>
                   <div class="d-flex justify-content-between fs-4 fw-bold text-dark border-top pt-2 mb-3">
                     <span>Total Due</span>
-                    <span id="checkoutGrandTotal" class="text-primary">₦0</span>
+                    <span id="checkoutGrandTotal" class="text-primary">â‚¦0</span>
                   </div>
                 </div>
 
@@ -177,7 +171,7 @@
                     <i class="bi bi-shield-lock-fill text-success"></i>
                     <strong class="text-dark">Reliable Kitchen Dispatch</strong>
                   </div>
-                  Your order is delivered immediately to the Cozy’Plate Kitchen inbox. You will receive an on-screen reference and confirmation email.
+                  Your order will be confirmed immediately and the kitchen team will prepare it as soon as possible.
                 </div>
               </div>
             </div>
@@ -198,7 +192,7 @@
 
           <h3 class="fw-bold font-heading mb-1 text-dark">Order Confirmed!</h3>
           <p class="text-muted small mb-3">
-            Thank you! Your order has been dispatched directly to the Cozy’Plate Kitchen inbox.
+            Thank you! Your order has been placed successfully and the kitchen team is ready to prepare it.
           </p>
 
           <div class="p-3 bg-light rounded-3 text-start border mb-3">
@@ -213,12 +207,7 @@
             <div class="d-flex justify-content-between align-items-center small mb-1">
               <span class="text-muted">Phone:</span>
               <span id="successPhone" class="fw-medium"></span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center small mb-1">
-              <span class="text-muted">Email:</span>
-              <span id="successEmail" class="fw-medium text-truncate" style="max-width: 220px;"></span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center small mb-2">
+            </div>            <div class="d-flex justify-content-between align-items-center small mb-2">
               <span class="text-muted">Delivery Address:</span>
               <span id="successAddress" class="fw-medium text-end text-truncate" style="max-width: 220px;"></span>
             </div>
@@ -234,13 +223,13 @@
 
             <div class="d-flex justify-content-between align-items-center border-top pt-2">
               <span class="fw-bold">Total Amount:</span>
-              <span id="successTotal" class="fw-bold fs-5 text-primary">₦0</span>
+              <span id="successTotal" class="fw-bold fs-5 text-primary">â‚¦0</span>
             </div>
           </div>
 
           <div class="alert alert-info py-2 px-3 small rounded-3 text-start mb-3">
             <i class="bi bi-clock-history me-1"></i>
-            Estimated preparation & dispatch time: <strong>30 – 45 minutes</strong>.
+            Estimated preparation & dispatch time: <strong>30 â€“ 45 minutes</strong>.
           </div>
 
           <div class="d-grid gap-2">
@@ -263,14 +252,12 @@
 
   <footer class="py-4 bg-white border-top text-center text-muted small">
     <div class="container">
-      &copy; 2026 Cozy’Plate – Kitchen Vibes. All rights reserved.
+      &copy; 2026 Cozyâ€™Plate â€“ Kitchen Vibes. All rights reserved.
     </div>
   </footer>
 
   <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script src="js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>  <script src="js/config.js"></script>
   <script src="js/menu-data.js"></script>
   <script src="js/cart.js"></script>
   <script src="js/checkout.js"></script>
@@ -282,3 +269,5 @@
   </script>
 </body>
 </html>
+
+

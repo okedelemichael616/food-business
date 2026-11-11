@@ -1,6 +1,6 @@
-/**
+﻿/**
  * ============================================================================
- * COZY'PLATE – KITCHEN VIBES | MAIN APPLICATION SCRIPT
+ * COZY'PLATE â€“ KITCHEN VIBES | MAIN APPLICATION SCRIPT
  * ============================================================================
  * Handles UI interactions, menu rendering, category filtering, search,
  * modals, image lightboxes, and smooth animations.
@@ -47,13 +47,7 @@ const App = {
       el.textContent = CozyConfig.contact.address;
     });
 
-    // Populate email
-    document.querySelectorAll(".cp-email-text").forEach(el => {
-      el.textContent = CozyConfig.contact.email;
-    });
-    document.querySelectorAll(".cp-email-link").forEach(el => {
-      el.href = `mailto:${CozyConfig.contact.email}`;
-    });
+
 
     // Maps link
     document.querySelectorAll(".cp-map-link").forEach(el => {
@@ -169,7 +163,7 @@ const App = {
       return;
     }
 
-    const currency = CozyConfig.ordering?.currencySymbol || "₦";
+    const currency = CozyConfig.ordering?.currencySymbol || "â‚¦";
 
     container.innerHTML = items.map(item => `
       <div class="col-12 col-md-6 col-lg-4 menu-item-col" data-item-id="${item.id}">
@@ -251,7 +245,7 @@ const App = {
     const modalEl = document.getElementById("dishDetailsModal");
     if (!modalEl || typeof bootstrap === "undefined") return;
 
-    const currency = CozyConfig.ordering?.currencySymbol || "₦";
+    const currency = CozyConfig.ordering?.currencySymbol || "â‚¦";
 
     document.getElementById("modalDishTitle").textContent = item.name;
     document.getElementById("modalDishCategory").textContent = item.categoryLabel;
@@ -308,3 +302,7 @@ const App = {
     CheckoutSystem.init();
   }
 };
+
+
+
+
