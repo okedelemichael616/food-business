@@ -159,22 +159,17 @@ const Cart = {
     if (this.deliveryPreference === "pickup") return 0;
     const subtotal = this.getSubtotal();
     const threshold = (typeof CozyConfig !== "undefined" && CozyConfig.ordering?.freeDeliveryThreshold) || 25000;
-    const fee = (typeof CozyConfig !== "undefined" && CozyConfig.ordering?.deliveryFee) || 1500;
+    const fee = (typeof CozyConfig !== "undefined" && CozyConfig.ordering?.deliveryFee) || 800;
     
     // Free delivery if above threshold and subtotal > 0
     if (subtotal >= threshold || subtotal === 0) return 0;
     return fee;
   },
 
-  getPackagingFee() {
-    if (this.items.length === 0) return 0;
-    return (typeof CozyConfig !== "undefined" && CozyConfig.ordering?.packagingFee) || 500;
-  },
-
   getTotal() {
     const subtotal = this.getSubtotal();
     if (subtotal === 0) return 0;
-    return subtotal + this.getDeliveryFee() + this.getPackagingFee();
+    return subtotal + this.getDeliveryFee();
   },
 
   render() {
@@ -198,7 +193,6 @@ const Cart = {
     const cartFooter = document.getElementById("cartDrawerFooter");
     const subtotalEl = document.getElementById("cartDrawerSubtotal");
     const deliveryEl = document.getElementById("cartDrawerDelivery");
-    const packagingEl = document.getElementById("cartDrawerPackaging");
     const totalEl = document.getElementById("cartDrawerTotal");
     const freeDeliveryNoticeEl = document.getElementById("cartFreeDeliveryNotice");
 
@@ -214,7 +208,6 @@ const Cart = {
         const currencySymbol = (typeof CozyConfig !== "undefined" && CozyConfig.ordering?.currencySymbol) || "₦";
         const subtotal = this.getSubtotal();
         const deliveryFee = this.getDeliveryFee();
-        const packagingFee = this.getPackagingFee();
         const total = this.getTotal();
         const threshold = (typeof CozyConfig !== "undefined" && CozyConfig.ordering?.freeDeliveryThreshold) || 25000;
 
@@ -253,7 +246,6 @@ const Cart = {
           if (deliveryFee === 0) deliveryEl.classList.add("text-success", "fw-bold");
           else deliveryEl.classList.remove("text-success", "fw-bold");
         }
-        if (packagingEl) packagingEl.textContent = `${currencySymbol}${packagingFee.toLocaleString("en-NG")}`;
         if (totalEl) totalEl.textContent = `${currencySymbol}${total.toLocaleString("en-NG")}`;
 
         if (freeDeliveryNoticeEl) {

@@ -43,9 +43,8 @@ const CozyConfig = {
   ordering: {
     currencySymbol: "₦",
     currencyCode: "NGN",
-    // deliveryFee: 1500,
+    deliveryFee: 800,
     freeDeliveryThreshold: 25000,
-    // packagingFee: 500,
     estimatedPrepTime: "30 – 45 minutes",
     minOrderAmount: 2000
   },

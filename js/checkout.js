@@ -66,7 +66,6 @@ const CheckoutSystem = {
     const summaryContainer = document.getElementById("checkoutOrderSummaryList");
     const subtotalEl = document.getElementById("checkoutSubtotal");
     const deliveryEl = document.getElementById("checkoutDeliveryFee");
-    const packagingEl = document.getElementById("checkoutPackagingFee");
     const totalEl = document.getElementById("checkoutGrandTotal");
     const checkoutItemCountEl = document.getElementById("checkoutItemCount");
 
@@ -106,7 +105,6 @@ const CheckoutSystem = {
 
     const subtotal = Cart.getSubtotal();
     const delivery = Cart.getDeliveryFee();
-    const packaging = Cart.getPackagingFee();
     const grandTotal = Cart.getTotal();
 
     if (subtotalEl) subtotalEl.textContent = `${currency}${subtotal.toLocaleString("en-NG")}`;
@@ -119,7 +117,6 @@ const CheckoutSystem = {
         deliveryEl.textContent = `${currency}${delivery.toLocaleString("en-NG")}`;
       }
     }
-    if (packagingEl) packagingEl.textContent = `${currency}${packaging.toLocaleString("en-NG")}`;
     if (totalEl) totalEl.textContent = `${currency}${grandTotal.toLocaleString("en-NG")}`;
   },
 
@@ -153,7 +150,7 @@ const CheckoutSystem = {
     const phone = document.getElementById("customerPhone")?.value.trim() || "";
     const deliveryPreference = document.querySelector('input[name="deliveryPref"]:checked')?.value || "delivery";
     const address = document.getElementById("customerAddress")?.value.trim() || "";
-    const area = document.getElementById("customerArea")?.value || "Abuja Municipal";
+    const area = document.getElementById("customerArea")?.value || "Under G";
     const deliveryTime = document.getElementById("customerDeliveryTime")?.value || "As soon as ready (30-45 mins)";
     const instructions = document.getElementById("customerNotes")?.value.trim() || "No extra instructions";
 
@@ -161,7 +158,7 @@ const CheckoutSystem = {
       fullName,
       phone,
       deliveryPreference,
-      address: deliveryPreference === "pickup" ? "Self Pickup from Cozy'Plate Kitchen (A.C Umezulike St, Abuja)" : `${address} (${area})`,
+      address: deliveryPreference === "pickup" ? `Self Pickup from Cozy'Plate Kitchen (${CozyConfig.contact.address})` : `${address} (${area})`,
       deliveryTime,
       instructions
     };
@@ -196,7 +193,6 @@ const CheckoutSystem = {
     const currency = CozyConfig.ordering?.currencySymbol || "₦";
     const subtotal = Cart.getSubtotal();
     const deliveryFee = Cart.getDeliveryFee();
-    const packagingFee = Cart.getPackagingFee();
     const grandTotal = Cart.getTotal();
 
     const orderPayload = {
@@ -211,7 +207,6 @@ const CheckoutSystem = {
       items,
       subtotalFormatted: `${currency}${subtotal.toLocaleString("en-NG")}`,
       deliveryFeeFormatted: deliveryFee === 0 ? "FREE" : `${currency}${deliveryFee.toLocaleString("en-NG")}`,
-      packagingFeeFormatted: `${currency}${packagingFee.toLocaleString("en-NG")}`,
       grandTotalFormatted: `${currency}${grandTotal.toLocaleString("en-NG")}`,
       grandTotalRaw: grandTotal
     };
@@ -235,7 +230,6 @@ const CheckoutSystem = {
       "",
       `Subtotal: ${orderPayload.subtotalFormatted}`,
       `Delivery: ${orderPayload.deliveryFeeFormatted}`,
-      `Packaging: ${orderPayload.packagingFeeFormatted}`,
       `Total: ${orderPayload.grandTotalFormatted}`,
       "",
       "Please confirm my order."
