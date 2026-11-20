@@ -59,7 +59,7 @@
   </div>
 
 
-  <nav class="navbar navbar-expand-lg sticky-top navbar-cozy" id="navbarMain">
+  <nav class="navbar navbar-expand-xl sticky-top navbar-cozy" id="navbarMain">
     <div class="container">
       <!-- Brand Logo & Title -->
       <a class="navbar-brand-cozy" href="#home">
@@ -73,7 +73,7 @@
       </a>
 
       <!-- Right Action Items on Mobile (Cart Button & Hamburger) -->
-      <div class="d-flex align-items-center gap-2 d-lg-none">
+      <div class="d-flex align-items-center gap-2 d-xl-none">
         <button type="button" class="btn btn-cart-nav p-2" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas" aria-label="Open Shopping Cart">
           <i class="bi bi-basket3 fs-5"></i>
           <span class="cart-count-badge d-none ms-1">0</span>
@@ -85,7 +85,7 @@
 
       <!-- Navigation Links -->
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 text-center text-lg-start">
+        <ul class="navbar-nav mx-auto mb-2 mb-xl-0 text-center text-xl-start">
           <li class="nav-item">
             <a class="nav-link active" href="#home">Home</a>
           </li>
@@ -110,7 +110,7 @@
         </ul>
 
         <!-- Desktop Action Buttons -->
-        <div class="d-none d-lg-flex align-items-center gap-3">
+        <div class="d-none d-xl-flex align-items-center gap-3">
           <!-- Cart Drawer Trigger Button -->
           <button type="button" class="btn btn-cart-nav" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas">
             <i class="bi bi-basket3 me-1"></i> Cart
@@ -120,6 +120,15 @@
           <!-- High-Contrast Order Now CTA Button -->
           <a href="#menu" class="btn btn-primary rounded-pill px-4 py-2">
             <i class="bi bi-bag-check-fill me-1"></i> Order Now
+          </a>
+        </div>
+
+        <div class="mobile-nav-actions d-flex d-xl-none gap-2">
+          <a href="#menu" class="btn btn-primary rounded-pill flex-grow-1">
+            <i class="bi bi-bag-check-fill me-1"></i> Order Now
+          </a>
+          <a href="#" target="_blank" rel="noopener noreferrer" class="cp-whatsapp-link btn btn-outline-success rounded-pill flex-grow-1">
+            <i class="bi bi-whatsapp me-1"></i> WhatsApp
           </a>
         </div>
       </div>
@@ -149,7 +158,7 @@
           </p>
 
           <!-- 2 Prominent CTA Buttons -->
-          <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+          <div class="hero-cta-row d-flex flex-wrap align-items-center gap-3 mb-4">
             <button type="button" class="btn btn-primary btn-lg rounded-pill px-4 py-3 shadow-lg" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
               <i class="bi bi-bag-heart-fill me-2"></i> Order Online
             </button>
@@ -384,7 +393,7 @@
       <!-- Live Menu Search Bar -->
       <div class="menu-search-box">
         <i class="bi bi-search menu-search-icon"></i>
-        <input type="text" id="menuSearchInput" class="form-control menu-search-input" placeholder="Search by meal name, soup, meat, or keyword...">
+        <input type="text" id="menuSearchInput" class="form-control menu-search-input" placeholder="Search by meal name, soup, meat, or keyword..." aria-label="Search meals">
       </div>
 
       <!-- Category Filter Tabs -->
@@ -408,10 +417,10 @@
 
         <!-- Gallery Filter Buttons -->
         <div class="d-flex flex-wrap justify-content-center gap-2 mt-4">
-          <button type="button" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-1 gallery-filter-btn active" data-filter="all">All Photos</button>
-          <button type="button" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-1 gallery-filter-btn" data-filter="rice">Rice Delights</button>
-          <button type="button" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-1 gallery-filter-btn" data-filter="soups">Soups & Swallows</button>
-          <button type="button" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-1 gallery-filter-btn" data-filter="grills">Grills & Asun</button>
+          <button type="button" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-1 gallery-filter-btn active" data-filter="all" aria-pressed="true">All Photos</button>
+          <button type="button" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-1 gallery-filter-btn" data-filter="rice" aria-pressed="false">Rice Delights</button>
+          <button type="button" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-1 gallery-filter-btn" data-filter="soups" aria-pressed="false">Soups & Swallows</button>
+          <button type="button" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-1 gallery-filter-btn" data-filter="grills" aria-pressed="false">Grills & Asun</button>
         </div>
       </div>
 
@@ -844,7 +853,7 @@
         </div>
 
         <div class="d-grid gap-2">
-          <button type="button" class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#checkoutModal" data-bs-dismiss="offcanvas">
+          <button type="button" id="btnCartCheckout" class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm">
             <i class="bi bi-credit-card-2-front-fill me-2"></i> Proceed to Checkout
           </button>
           <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill" onclick="Cart.clearCart()">

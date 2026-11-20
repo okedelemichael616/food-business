@@ -298,6 +298,34 @@ const Cart = {
   },
 
   setupEventListeners() {
+    const checkoutButton = document.getElementById("btnCartCheckout");
+    if (checkoutButton) {
+      checkoutButton.addEventListener("click", () => {
+        const cartDrawer = document.getElementById("cartOffcanvas");
+        const checkoutModal = document.getElementById("checkoutModal");
+        if (!cartDrawer || !checkoutModal) {
+          console.error("Unable to open checkout: the cart drawer or checkout modal is missing.");
+          return;
+        }
+        if (typeof bootstrap === "undefined") {
+          console.error("Unable to open checkout: Bootstrap is unavailable.");
+          return;
+        }
+
+        const showCheckout = () => {
+          bootstrap.Modal.getOrCreateInstance(checkoutModal).show();
+        };
+        const drawer = bootstrap.Offcanvas.getOrCreateInstance(cartDrawer);
+
+        if (cartDrawer.classList.contains("show")) {
+          cartDrawer.addEventListener("hidden.bs.offcanvas", showCheckout, { once: true });
+          drawer.hide();
+        } else {
+          showCheckout();
+        }
+      });
+    }
+
     window.addEventListener("storage", (e) => {
       if (e.key === STORAGE_KEY) {
         this.loadFromStorage();

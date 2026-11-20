@@ -63,6 +63,7 @@ const App = {
   initNavbar() {
     const navbar = document.querySelector(".navbar-cozy");
     const navLinks = document.querySelectorAll(".navbar-nav .nav-link");
+    const mobileActionLinks = document.querySelectorAll(".mobile-nav-actions a[href^='#']");
     const navbarCollapse = document.getElementById("navbarNav");
 
     // Scroll state for sticky navbar
@@ -75,7 +76,7 @@ const App = {
     });
 
     // Auto close mobile drawer on link click
-    navLinks.forEach(link => {
+    [...navLinks, ...mobileActionLinks].forEach(link => {
       link.addEventListener("click", () => {
         if (navbarCollapse && navbarCollapse.classList.contains("show") && typeof bootstrap !== "undefined") {
           const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
@@ -113,7 +114,7 @@ const App = {
       const isActive = cat.id === this.currentCategory;
       const count = cat.id === "all" ? CozyMenuItems.length : CozyMenuItems.filter(i => i.category === cat.id).length;
       return `
-        <button type="button" class="btn category-tab-btn ${isActive ? 'active' : ''}" data-category="${cat.id}">
+        <button type="button" class="btn category-tab-btn ${isActive ? 'active' : ''}" data-category="${cat.id}" aria-pressed="${isActive}">
           <i class="bi ${cat.icon} me-1"></i>
           <span>${cat.name}</span>
           <span class="category-count-badge">${count}</span>
@@ -124,8 +125,12 @@ const App = {
     // Bind click events
     container.querySelectorAll(".category-tab-btn").forEach(btn => {
       btn.addEventListener("click", () => {
-        container.querySelectorAll(".category-tab-btn").forEach(b => b.classList.remove("active"));
+        container.querySelectorAll(".category-tab-btn").forEach(b => {
+          b.classList.remove("active");
+          b.setAttribute("aria-pressed", "false");
+        });
         btn.classList.add("active");
+        btn.setAttribute("aria-pressed", "true");
         this.currentCategory = btn.dataset.category;
         this.renderMenuItems();
       });
@@ -282,8 +287,12 @@ const App = {
 
     filterBtns.forEach(btn => {
       btn.addEventListener("click", () => {
-        filterBtns.forEach(b => b.classList.remove("active"));
+        filterBtns.forEach(b => {
+          b.classList.remove("active");
+          b.setAttribute("aria-pressed", "false");
+        });
         btn.classList.add("active");
+        btn.setAttribute("aria-pressed", "true");
         const filter = btn.dataset.filter;
 
         galleryItems.forEach(item => {
