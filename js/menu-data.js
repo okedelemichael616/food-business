@@ -1,18 +1,4 @@
-/**
- * ============================================================================
- * COZY'PLATE – KITCHEN VIBES | FOOD MENU DATA
- * ============================================================================
- * Authentic, mouth-watering Nigerian meals organized into 5 primary categories:
- *  1. Rice Bowls
- *  2. Daily Yum
- *  3. Cozy Weekend
- *  4. Chef Specials
- *  5. Proteins & Sides
- * 
- * To edit prices, dish names, descriptions, or images, simply update the fields
- * in this file. The website updates automatically without needing to touch HTML.
- * ============================================================================
- */
+
 
 const CozyMenuCategories = [
   { id: "all", name: "All Dishes", icon: "bi-grid-fill" },
@@ -24,9 +10,7 @@ const CozyMenuCategories = [
 ];
 
 const CozyMenuItems = [
-  // --------------------------------------------------------------------------
-  // 1. RICE BOWLS
-  // --------------------------------------------------------------------------
+  
   {
     id: "rb-01",
     name: "Smoky Party Jollof Bowl",
@@ -118,9 +102,7 @@ const CozyMenuItems = [
     isPopular: false
   },
 
-  // --------------------------------------------------------------------------
-  // 2. DAILY YUM (Traditional Soups & Swallows)
-  // --------------------------------------------------------------------------
+  
   {
     id: "dy-01",
     name: "Royal Egusi Soup (per liter)",
@@ -193,9 +175,7 @@ const CozyMenuItems = [
     reviewsCount: 18,
     isPopular: false
   },  
-  // --------------------------------------------------------------------------
-  // 3. COZY WEEKEND (Feasts & Party Sharing Boxes)
-  // --------------------------------------------------------------------------
+
   {
     id: "cw-01",
     name: "Ponmo",
@@ -252,67 +232,6 @@ const CozyMenuItems = [
     isPopular: true
   },
 
-  // --------------------------------------------------------------------------
-  // 4. CHEF SPECIALS
-  // --------------------------------------------------------------------------
-  {
-    id: "cs-02",
-    name: "Slow-Cooked Goat Meat Pepper Soup",
-    category: "chef-specials",
-    categoryLabel: "Chef Specials",
-    price: 5800,
-    shortDescription: "Tender chunks of bone-in goat meat slow-simmered in fiery, peppery native herbs, uziza, and aromatics.",
-    description: "Slow-simmered for hours until the goat meat effortlessly slips from the bone. Packed with authentic restorative botanicals, habanero peppers, and fragrant dry herbs. The perfect pick-me-up any evening.",
-    image: "https://images.unsplash.com/photo-1572441713132-c542fc4fe282?auto=format&fit=crop&w=800&q=80",
-    badge: "Warming & Spicy",
-    badgeClass: "badge-spicy",
-    spiceLevel: "Extra Hot",
-    prepTime: "25 mins",
-    calories: "490 kcal",
-    rating: 4.8,
-    reviewsCount: 33,
-    isPopular: false
-  },
-  {
-    id: "cs-03",
-    name: "Firewood Native Stir-Fry Pasta",
-    category: "chef-specials",
-    categoryLabel: "Chef Specials",
-    price: 4600,
-    shortDescription: "Nigerian party-style spaghetti tossed in hot pepper relish, crayfish, diced sausages, and shredded smoked chicken.",
-    description: "An iconic Nigerian street and party innovation. Long spaghetti cooked in intensely flavorful pepper broth with smoked crayfish, diced beef sausages, shredded chicken, and sweet onions. Spicy, saucy, and delightfully satisfying.",
-    image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=800&q=80",
-    badge: "Party Vibes",
-    badgeClass: "badge-special",
-    spiceLevel: "Hot",
-    prepTime: "25 mins",
-    calories: "620 kcal",
-    rating: 4.7,
-    reviewsCount: 20,
-    isPopular: false
-  },
-  {
-    id: "cs-04",
-    name: "Honey Glazed Jumbo Turkey Bowl",
-    category: "chef-specials",
-    categoryLabel: "Chef Specials",
-    price: 6000,
-    shortDescription: "Sweet and spicy honey-chili glazed grilled turkey served over spiced jollof rice with fried sweet plantains.",
-    description: "Charcoal-grilled jumbo turkey basted in a sticky, sweet-and-spicy wild honey and scotch bonnet glaze. Plated over fragrant Jollof rice with caramelized fried plantain medallions.",
-    image: "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=800&q=80",
-    badge: "Sweet & Spicy",
-    badgeClass: "badge-chef",
-    spiceLevel: "Medium",
-    prepTime: "30 mins",
-    calories: "760 kcal",
-    rating: 4.9,
-    reviewsCount: 24,
-    isPopular: false
-  },
-
-  // --------------------------------------------------------------------------
-  // 5. PROTEINS & SIDES
-  // --------------------------------------------------------------------------
   {
     id: "pr-01",
     name: " Fried Eggs",
@@ -403,24 +322,6 @@ const CozyMenuItems = [
     reviewsCount: 60,
     isPopular: true
   },
-  {
-    id: "pr-06",
-    name: "Extra Swallow (Pounded Yam / Eba / Semo)",
-    category: "proteins",
-    categoryLabel: "Proteins & Sides",
-    price: 1000,
-    shortDescription: "Piping hot, freshly prepared traditional swallow portion wrapped warm.",
-    description: "Smooth, lump-free traditional swallow of your choice: Authentic Pounded Yam, Garri (Yellow or White Eba), or Smooth Semovita.",
-    image: "https://images.unsplash.com/photo-1547496502-affa22d38842?auto=format&fit=crop&w=800&q=80",
-    badge: "Side",
-    badgeClass: "badge-chef",
-    spiceLevel: "None",
-    prepTime: "10 mins",
-    calories: "350 kcal",
-    rating: 4.8,
-    reviewsCount: 15,
-    isPopular: false
-  }
 ];
 
 // Helper functions for menu queries
