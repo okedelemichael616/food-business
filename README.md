@@ -31,18 +31,22 @@ A premium Nigerian food-ordering website for Cozy’Plate, built to help custome
    http://localhost:3000
    ```
 
+## Deploy to Vercel
+
+Import the repository with its root directory set to the repository root. Vercel serves site files from `public/`; the Express server uses that same directory for local development.
+
 ## Project structure
 
 ```text
 cozy/
-├── index.html
-├── checkout.html
+├── public/
+│   ├── index.html
+│   ├── checkout.html
+│   ├── css/
+│   ├── js/
+│   └── images/
 ├── server.js
 ├── package.json
 ├── .env.example
-├── README.md
-├── css/
-├── js/
-├── images/
-└── .gitignore
+└── README.md
 ```
